@@ -4,9 +4,11 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
 import javax.swing.*;
 
+import ru.urfu.action.ExitAction;
 import ru.urfu.log.Logger;
 import ru.urfu.listener.WindowListener;
 
@@ -20,15 +22,20 @@ public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final JMenuBar menuBar = new JMenuBar();
+    private final WindowListener windowListener = new WindowListener();
     
     public MainApplicationFrame() {
         setBounds(50, 50,screenSize.width  - 100,screenSize.height - 100);
         setContentPane(desktopPane);
         createLogWindow();
         createGameWindow();
-        setJMenuBar(generateMenuBar());
+        addWindowMenu();
+        addViewMenu();
+        addTestMenu();
+        setJMenuBar(menuBar);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowListener());
+        addWindowListener(windowListener);
     }
 
     protected void createGameWindow() {
@@ -54,10 +61,14 @@ public class MainApplicationFrame extends JFrame
         frame.setVisible(true);
     }
 
-    private JMenuBar generateMenuBar()
-    {
-        JMenuBar menuBar = new JMenuBar();
-        
+    private void addWindowMenu() {
+        JMenu windowMenu = new JMenu("Окно");
+        windowMenu.add(new JMenuItem(new ExitAction()));
+
+        menuBar.add(windowMenu);
+    }
+
+    private void addViewMenu() {
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
@@ -81,11 +92,15 @@ public class MainApplicationFrame extends JFrame
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
 
+        menuBar.add(lookAndFeelMenu);
+    }
+
+    private void addTestMenu() {
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
                 "Тестовые команды");
-        
+
         {
             JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
             addLogMessageItem.addActionListener((event) -> {
@@ -94,9 +109,7 @@ public class MainApplicationFrame extends JFrame
             testMenu.add(addLogMessageItem);
         }
 
-        menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
-        return menuBar;
     }
     
     private void setLookAndFeel(String className)
