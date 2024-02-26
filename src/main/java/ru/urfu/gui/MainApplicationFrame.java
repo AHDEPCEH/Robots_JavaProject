@@ -31,6 +31,10 @@ public class MainApplicationFrame extends JFrame
         setJMenuBar(menuBar);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            /**
+             * Слушатель событий
+             * Переопределённый метод закрытия окна
+             */
             @Override
             public void windowClosing(WindowEvent e) {
                 Object[] options = { "Да", "Нет" };
