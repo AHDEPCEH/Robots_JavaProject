@@ -96,12 +96,12 @@ public class MainApplicationFrame extends JFrame
         actionMenu.setMnemonic(KeyEvent.VK_A);
 
         {
-            JMenuItem addWindowItem = new JMenuItem("Закрыть окно", KeyEvent.VK_X);
-            addWindowItem.addActionListener((event) -> {
+            JMenuItem closeItem = new JMenuItem("Закрыть окно", KeyEvent.VK_X);
+            closeItem.addActionListener((event) -> {
                 WindowEvent windowClosing = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
                 this.dispatchEvent(windowClosing);
             });
-            actionMenu.add(addWindowItem);
+            actionMenu.add(closeItem);
         }
         return actionMenu;
     }
@@ -145,11 +145,11 @@ public class MainApplicationFrame extends JFrame
                 "Тестовые команды");
 
         {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener((event) -> {
+            JMenuItem logMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+            logMessageItem.addActionListener((event) -> {
                 Logger.debug("Новая строка");
             });
-            testMenu.add(addLogMessageItem);
+            testMenu.add(logMessageItem);
         }
         return testMenu;
     }
