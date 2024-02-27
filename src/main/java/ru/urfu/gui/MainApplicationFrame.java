@@ -54,7 +54,7 @@ public class MainApplicationFrame extends JFrame
     /**
      * Создание внутреннего окна(Игровое поле)
      */
-    protected JInternalFrame createGameWindow() {
+    private JInternalFrame createGameWindow() {
         GameWindow gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
         return gameWindow;
@@ -63,7 +63,7 @@ public class MainApplicationFrame extends JFrame
     /**
      * Создание внутреннего окна с логами
      */
-    protected JInternalFrame createLogWindow()
+    private JInternalFrame createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
@@ -78,7 +78,7 @@ public class MainApplicationFrame extends JFrame
      * Метод для добавления и отображения внутренних окон
      * @param frame - Внутреннее окно
      */
-    protected void addWindow(JInternalFrame frame)
+    private void addWindow(JInternalFrame frame)
     {
         desktopPane.add(frame);
         frame.setVisible(true);
