@@ -27,10 +27,6 @@ public class MainApplicationFrame extends JFrame
         initJMenuBar(new JMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-            /**
-             * Invoked when a window is in the process of being closed.
-             * The close operation can be overridden at this point.
-             */
             @Override
             public void windowClosing(WindowEvent e) {
                 Object[] options = { "Да", "Нет" };
