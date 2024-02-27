@@ -14,55 +14,60 @@ import ru.urfu.log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private final JMenuBar menuBar = new JMenuBar();
 
     /**
-     * Конструктор окна с его описанием
+     * Создание главного окна приложения
      */
     public MainApplicationFrame() {
-        setBounds(50, 50,screenSize.width  - 100,screenSize.height - 100);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds(50, 50, screenSize.width  - 100, screenSize.height - 100);
         setContentPane(desktopPane);
-        createLogWindow();
-        createGameWindow();
-        addWindowMenu();
-        addViewMenu();
-        addTestMenu();
-        setJMenuBar(menuBar);
+        addWindow(createLogWindow());
+        addWindow(createGameWindow());
+        initJMenuBar(new JMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             /**
-             * Слушатель событий
-             * Переопределённый метод закрытия окна
+             * Invoked when a window is in the process of being closed.
+             * The close operation can be overridden at this point.
              */
             @Override
             public void windowClosing(WindowEvent e) {
                 Object[] options = { "Да", "Нет" };
-                int n = JOptionPane
-                        .showOptionDialog(e.getWindow(), "Вы действительно желаете выйти?",
-                                "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
-                                JOptionPane.QUESTION_MESSAGE, null, options,
-                                options[0]);
+                int n = JOptionPane.showOptionDialog(e.getWindow(), "Вы действительно желаете выйти?",
+                        "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 if (n == JOptionPane.YES_OPTION) {
                     MainApplicationFrame.this.setDefaultCloseOperation(EXIT_ON_CLOSE);
                 }
-                }
-            });
+            }
+        });
+    }
+
+    /**
+     * Инициализация меню приложения в виде строки
+     * @param menuBar - меню
+     */
+    private void initJMenuBar(JMenuBar menuBar) {
+        menuBar.add(createActionMenu());
+        menuBar.add(createViewMenu());
+        menuBar.add(createTestMenu());
+        setJMenuBar(menuBar);
     }
 
     /**
      * Создание внутреннего окна(Игровое поле)
      */
-    protected void createGameWindow() {
+    protected JInternalFrame createGameWindow() {
         GameWindow gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
-        addWindow(gameWindow);
+        return gameWindow;
     }
 
     /**
      * Создание внутреннего окна с логами
      */
-    protected void createLogWindow()
+    protected JInternalFrame createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
@@ -70,7 +75,7 @@ public class MainApplicationFrame extends JFrame
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug("Протокол работает");
-        addWindow(logWindow);
+        return logWindow;
     }
 
     /**
@@ -84,28 +89,27 @@ public class MainApplicationFrame extends JFrame
     }
 
     /**
-     * Создание и добавление пункта меню - окно
+     * Создание пункта меню для взаимодействия с окном
      */
-    private void addWindowMenu() {
-        JMenu windowMenu = new JMenu("Окно");
-        windowMenu.setMnemonic(KeyEvent.VK_X);
+    private JMenu createActionMenu() {
+        JMenu actionMenu = new JMenu("Действие");
+        actionMenu.setMnemonic(KeyEvent.VK_A);
 
         {
-            JMenuItem addWindowItem = new JMenuItem("Закрыть", KeyEvent.VK_X);
+            JMenuItem addWindowItem = new JMenuItem("Закрыть окно", KeyEvent.VK_X);
             addWindowItem.addActionListener((event) -> {
                 WindowEvent windowClosing = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
                 this.dispatchEvent(windowClosing);
             });
-            windowMenu.add(addWindowItem);
+            actionMenu.add(addWindowItem);
         }
-
-        menuBar.add(windowMenu);
+        return actionMenu;
     }
 
     /**
-     * Создание и добавление пункта меню - Режим отображения
+     * Создание пункта меню для смены отображения графического интерфейса
      */
-    private void addViewMenu() {
+    private JMenu createViewMenu() {
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
@@ -128,14 +132,13 @@ public class MainApplicationFrame extends JFrame
             });
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
-
-        menuBar.add(lookAndFeelMenu);
+        return lookAndFeelMenu;
     }
 
     /**
-     * Создание и добавление пункта меню - Тесты(для вывода записи в окно логов)
+     * Создание пункта меню, отвечающего за тестирование работы приложения
      */
-    private void addTestMenu() {
+    private JMenu createTestMenu() {
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
@@ -148,8 +151,7 @@ public class MainApplicationFrame extends JFrame
             });
             testMenu.add(addLogMessageItem);
         }
-
-        menuBar.add(testMenu);
+        return testMenu;
     }
 
     /**
