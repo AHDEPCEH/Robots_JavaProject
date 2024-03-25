@@ -5,25 +5,39 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
 import javax.swing.*;
+
 import ru.urfu.log.Logger;
+import ru.urfu.saveUtil.FileManager;
+import ru.urfu.saveUtil.Savable;
+import ru.urfu.saveUtil.SubDictionary;
 
 /**
  * Главное окно приложения
  */
-public class MainApplicationFrame extends JFrame
+public class MainApplicationFrame extends JFrame implements Savable
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final FileManager fileManager;
+    private final String prefix = "main";
+    private final LogWindow logWindow;
+    private final GameWindow gameWindow;
 
     /**
      * Создание главного окна приложения
      */
-    public MainApplicationFrame() {
+    public MainApplicationFrame(String fileName) {
+        fileManager = new FileManager(fileName);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(50, 50, screenSize.width  - 100, screenSize.height - 100);
+        recoverState();
         setContentPane(desktopPane);
-        addWindow(createLogWindow());
-        addWindow(createGameWindow());
+        logWindow = new LogWindow(Logger.getDefaultLogSource(), fileManager);
+        gameWindow = new GameWindow(fileManager);
+        addWindow(logWindow);
+        addWindow(gameWindow);
+        setMinimumSize(new Dimension(300, 800));
+        Logger.debug("Протокол работает");
         initJMenuBar(new JMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -34,6 +48,9 @@ public class MainApplicationFrame extends JFrame
                         "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 if (n == JOptionPane.YES_OPTION) {
+                    if (!logWindow.isClosed()) logWindow.saveState();
+                    if (!gameWindow.isClosed()) gameWindow.saveState();
+                    saveState();
                     MainApplicationFrame.this.setDefaultCloseOperation(EXIT_ON_CLOSE);
                 }
             }
@@ -49,29 +66,6 @@ public class MainApplicationFrame extends JFrame
         menuBar.add(createViewMenu());
         menuBar.add(createTestMenu());
         setJMenuBar(menuBar);
-    }
-
-    /**
-     * Создание внутреннего окна(Игровое поле)
-     */
-    private JInternalFrame createGameWindow() {
-        GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
-        return gameWindow;
-    }
-
-    /**
-     * Создание внутреннего окна с логами
-     */
-    private JInternalFrame createLogWindow()
-    {
-        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10,10);
-        logWindow.setSize(300, 800);
-        setMinimumSize(logWindow.getSize());
-        logWindow.pack();
-        Logger.debug("Протокол работает");
-        return logWindow;
     }
 
     /**
@@ -142,9 +136,7 @@ public class MainApplicationFrame extends JFrame
 
         {
             JMenuItem logMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            logMessageItem.addActionListener((event) -> {
-                Logger.debug("Новая строка");
-            });
+            logMessageItem.addActionListener((event) -> Logger.debug("Новая строка"));
             testMenu.add(logMessageItem);
         }
         return testMenu;
@@ -152,7 +144,6 @@ public class MainApplicationFrame extends JFrame
 
     /**
      * Метод для смены вида графического интерфейса
-     * @param className
      */
     private void setLookAndFeel(String className)
     {
@@ -168,4 +159,27 @@ public class MainApplicationFrame extends JFrame
         }
     }
 
+    @Override
+    public void saveState() {
+        SubDictionary<String, String> state = new SubDictionary<>(new HashMap<>(), prefix);
+        state.put("height", Integer.toString(getHeight()));
+        state.put("width", Integer.toString(getWidth()));
+        state.put("positionX", Integer.toString(getX()));
+        state.put("positionY", Integer.toString(getY()));
+        state.put("state", Integer.toString(getExtendedState()));
+        fileManager.writeState(state);
+    }
+
+    @Override
+    public void recoverState() {
+        try {
+            SubDictionary<String, String> state = fileManager.readState(prefix);
+            setLocation(Integer.parseInt(state.get("positionX")), Integer.parseInt(state.get("positionY")));
+            setSize(Integer.parseInt(state.get("width")), Integer.parseInt(state.get("height")));
+            setExtendedState(Integer.parseInt(state.get("state")));
+        } catch (Exception e){
+            setLocation(50, 50);
+            setExtendedState(MAXIMIZED_BOTH);
+        }
+    }
 }

@@ -1,7 +1,5 @@
 package ru.urfu.gui;
 
-import java.awt.Frame;
-
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -13,13 +11,9 @@ public class RobotsProgram
 //        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 //        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      } catch (Exception ignored) {}
       SwingUtilities.invokeLater(() -> {
-        MainApplicationFrame frame = new MainApplicationFrame();
-        frame.pack();
+        MainApplicationFrame frame = new MainApplicationFrame("save");
         frame.setVisible(true);
-        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       });
     }}
