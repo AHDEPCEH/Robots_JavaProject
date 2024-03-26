@@ -13,7 +13,7 @@ public class RobotsProgram
 //        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
       } catch (Exception ignored) {}
       SwingUtilities.invokeLater(() -> {
-        MainApplicationFrame frame = new MainApplicationFrame("save");
+        MainApplicationFrame frame = new MainApplicationFrame(System.getProperty("user.home")+"/save");
         frame.setVisible(true);
       });
     }}
