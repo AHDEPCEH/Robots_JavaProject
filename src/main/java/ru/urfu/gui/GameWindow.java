@@ -2,6 +2,7 @@ package ru.urfu.gui;
 
 import ru.urfu.saveUtil.FileManager;
 import ru.urfu.saveUtil.Savable;
+import ru.urfu.saveUtil.Saver;
 import ru.urfu.saveUtil.SubDictionary;
 
 import java.awt.BorderLayout;
@@ -18,6 +19,7 @@ public class GameWindow extends JInternalFrame implements Savable
 {
     private final String prefix = "model";
     private final FileManager fileManager;
+    private final Saver saver = new Saver();
 
     public GameWindow(FileManager fileManager)
     {
@@ -28,7 +30,6 @@ public class GameWindow extends JInternalFrame implements Savable
         addInternalFrameListener(new InternalFrameAdapter() {
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
-                saveState();
                 dispose();
             }
         });
@@ -40,22 +41,13 @@ public class GameWindow extends JInternalFrame implements Savable
 
     @Override
     public void saveState() {
-        SubDictionary<String, String> state = new SubDictionary<>(new HashMap<>(), prefix);
-        state.put("height", Integer.toString(getHeight()));
-        state.put("width", Integer.toString(getWidth()));
-        state.put("positionX", Integer.toString(getX()));
-        state.put("positionY", Integer.toString(getY()));
-        state.put("icon", Boolean.toString(isIcon));
-        fileManager.writeState(state);
+        fileManager.writeState(saver.buildState(this, prefix));
     }
 
     @Override
     public void recoverState() {
         try {
-            SubDictionary<String, String> state = fileManager.readState(prefix);
-            setLocation(Integer.parseInt(state.get("positionX")), Integer.parseInt(state.get("positionY")));
-            setSize(Integer.parseInt(state.get("width")), Integer.parseInt(state.get("height")));
-            setIcon(Boolean.parseBoolean(state.get("icon")));
+            saver.setState(this, fileManager.readState(prefix));
         } catch (Exception e) {
             setLocation(400, 50);
             setSize(500, 500);

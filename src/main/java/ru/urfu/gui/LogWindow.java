@@ -1,21 +1,16 @@
 package ru.urfu.gui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.TextArea;
-import java.util.HashMap;
-
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
 import ru.urfu.log.LogChangeListener;
 import ru.urfu.log.LogEntry;
 import ru.urfu.log.LogWindowSource;
 import ru.urfu.saveUtil.FileManager;
 import ru.urfu.saveUtil.Savable;
-import ru.urfu.saveUtil.SubDictionary;
+import ru.urfu.saveUtil.Saver;
+
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import java.awt.*;
 
 
 /**
@@ -27,6 +22,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     private final TextArea m_logContent;
     private final String prefix = "log";
     private final FileManager fileManager;
+    private final Saver saver = new Saver();
 
     /**
      * Конструктор класса
@@ -42,7 +38,6 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
                 m_logSource.unregisterListener(LogWindow.this);
-                saveState();
                 dispose();
             }
         });
@@ -83,22 +78,13 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 
     @Override
     public void saveState() {
-        SubDictionary<String, String> state = new SubDictionary<>(new HashMap<>(), prefix);
-        state.put("height", Integer.toString(getHeight()));
-        state.put("width", Integer.toString(getWidth()));
-        state.put("positionX", Integer.toString(getX()));
-        state.put("positionY", Integer.toString(getY()));
-        state.put("icon", Boolean.toString(isIcon));
-        fileManager.writeState(state);
+        fileManager.writeState(saver.buildState(this, prefix));
     }
 
     @Override
     public void recoverState() {
         try {
-            SubDictionary<String, String> state = fileManager.readState(prefix);
-            setLocation(Integer.parseInt(state.get("positionX")), Integer.parseInt(state.get("positionY")));
-            setSize(Integer.parseInt(state.get("width")), Integer.parseInt(state.get("height")));
-            setIcon(Boolean.parseBoolean(state.get("icon")));
+            saver.setState(this, fileManager.readState(prefix));
         } catch (Exception e){
             setSize(300, 600);
             setLocation(50, 50);

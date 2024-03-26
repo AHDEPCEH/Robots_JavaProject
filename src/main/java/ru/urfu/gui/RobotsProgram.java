@@ -16,4 +16,5 @@ public class RobotsProgram
         MainApplicationFrame frame = new MainApplicationFrame(System.getProperty("user.home")+"/save");
         frame.setVisible(true);
       });
-    }}
+    }
+}
