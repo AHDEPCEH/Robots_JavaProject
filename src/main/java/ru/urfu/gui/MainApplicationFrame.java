@@ -1,5 +1,6 @@
 package ru.urfu.gui;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,7 +21,6 @@ public class MainApplicationFrame extends JFrame implements Savable
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final FileManager fileManager;
     private final String prefix = "main";
-    private final List<Savable> frames = new ArrayList<>();
     private final Saver saver = new Saver();
 
     /**
@@ -28,11 +28,9 @@ public class MainApplicationFrame extends JFrame implements Savable
      */
     public MainApplicationFrame(String fileName) {
         fileManager = new FileManager(fileName);
+        addWindow(new LogWindow(Logger.getDefaultLogSource(), fileManager));
+        addWindow(new GameWindow(fileManager));
         setContentPane(desktopPane);
-        frames.add(new LogWindow(Logger.getDefaultLogSource(), fileManager));
-        frames.add(new GameWindow(fileManager));
-        frames.add(this);
-        for (Savable window : frames) if (window instanceof JInternalFrame) addWindow((JInternalFrame) window);
         Logger.debug("Протокол работает");
         initJMenuBar(new JMenuBar());
         recoverState();
@@ -54,7 +52,12 @@ public class MainApplicationFrame extends JFrame implements Savable
                 "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (n == JOptionPane.YES_OPTION){
-            for (Savable window : frames) window.saveState();
+            for (JInternalFrame window : desktopPane.getAllFrames()) {
+                if (window instanceof Savable) {
+                    ((Savable) window).saveState();
+                }
+            }
+            saveState();
             this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
     }
