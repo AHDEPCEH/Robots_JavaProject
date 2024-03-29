@@ -3,6 +3,7 @@ package ru.urfu.gui;
 import ru.urfu.log.LogChangeListener;
 import ru.urfu.log.LogEntry;
 import ru.urfu.log.LogWindowSource;
+import ru.urfu.log.Logger;
 import ru.urfu.saveUtil.FileManager;
 import ru.urfu.saveUtil.Savable;
 import ru.urfu.saveUtil.Saver;
@@ -22,13 +23,11 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     private final TextArea m_logContent;
     private final String prefix = "log";
     private final FileManager fileManager;
-    private final Saver saver = new Saver();
 
     /**
      * Конструктор класса
-     * @param logSource - источник
      */
-    public LogWindow(LogWindowSource logSource, FileManager fileManager)
+    public LogWindow(FileManager fileManager)
     {
         super("Протокол работы", true, true, true, true);
         this.fileManager = fileManager;
@@ -41,11 +40,11 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
                 dispose();
             }
         });
-        m_logSource = logSource;
+        m_logSource = Logger.getDefaultLogSource();
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
         m_logContent.setSize(200, 500);
-        
+        Logger.debug("Протокол работает");
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -78,13 +77,13 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 
     @Override
     public void saveState() {
-        fileManager.writeState(saver.buildState(this, prefix));
+        fileManager.writeState(Saver.buildState(this, prefix));
     }
 
     @Override
     public void recoverState() {
         try {
-            saver.setState(this, fileManager.readState(prefix));
+            Saver.setState(this, fileManager.readState(prefix));
         } catch (Exception e){
             setSize(300, 600);
             setLocation(50, 50);

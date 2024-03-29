@@ -1,17 +1,14 @@
 package ru.urfu.gui;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
-
 import ru.urfu.log.Logger;
 import ru.urfu.saveUtil.FileManager;
 import ru.urfu.saveUtil.Savable;
 import ru.urfu.saveUtil.Saver;
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Главное окно приложения
@@ -21,17 +18,15 @@ public class MainApplicationFrame extends JFrame implements Savable
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final FileManager fileManager;
     private final String prefix = "main";
-    private final Saver saver = new Saver();
 
     /**
      * Создание главного окна приложения
      */
-    public MainApplicationFrame(String fileName) {
-        fileManager = new FileManager(fileName);
-        addWindow(new LogWindow(Logger.getDefaultLogSource(), fileManager));
+    public MainApplicationFrame() {
+        fileManager = new FileManager();
+        addWindow(new LogWindow(fileManager));
         addWindow(new GameWindow(fileManager));
         setContentPane(desktopPane);
-        Logger.debug("Протокол работает");
         initJMenuBar(new JMenuBar());
         recoverState();
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -164,13 +159,13 @@ public class MainApplicationFrame extends JFrame implements Savable
 
     @Override
     public void saveState() {
-        fileManager.writeState(saver.buildState(this, prefix));
+        fileManager.writeState(Saver.buildState(this, prefix));
     }
 
     @Override
     public void recoverState() {
         try {
-            saver.setState(this, fileManager.readState(prefix));
+            Saver.setState(this, fileManager.readState(prefix));
         } catch (Exception e){
             setLocation(50, 50);
             setExtendedState(MAXIMIZED_BOTH);

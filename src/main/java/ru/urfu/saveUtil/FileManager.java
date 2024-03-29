@@ -5,15 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Класс для работы с файлами
+ * Класс для записи и чтения состояний окон из файла
  */
 public class FileManager {
 
-    private final String fileName;
-    public FileManager(String fileName){
-        this.fileName = fileName;
-    }
-
+    private final String fileName = System.getProperty("user.home")+"/save";
     /**
      * Метод для записи состояния объекта в файл
      * @param state - состояние объекта
@@ -28,7 +24,9 @@ public class FileManager {
                     lastState.put(parts[0], parts[1]);
                 }
             }
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for (String key : state.keySet()) {
             lastState.put(key, state.get(key.split("\\.")[1]));
         }
@@ -37,7 +35,9 @@ public class FileManager {
                 writer.write(key + "=" + lastState.get(key));
                 writer.newLine();
             }
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
