@@ -1,14 +1,13 @@
 package ru.urfu.gui;
 
 import ru.urfu.log.Logger;
-import ru.urfu.saveUtil.FileManager;
-import ru.urfu.saveUtil.Savable;
-import ru.urfu.saveUtil.Saver;
-
+import ru.urfu.saveUtil.*;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Главное окно приложения
@@ -16,19 +15,25 @@ import java.awt.event.WindowEvent;
 public class MainApplicationFrame extends JFrame implements Savable
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private final FileManager fileManager;
-    private final String prefix = "main";
+    private final FileManager fileManager = new FileManager();
+
+    private final List<Savable> savableFrames = new ArrayList<>();
 
     /**
      * Создание главного окна приложения
      */
     public MainApplicationFrame() {
-        fileManager = new FileManager();
-        addWindow(new LogWindow(fileManager));
-        addWindow(new GameWindow(fileManager));
+        addWindow(new LogWindow());
+        addWindow(new GameWindow());
+        for (JInternalFrame window : desktopPane.getAllFrames()) {
+            if (window instanceof Savable){
+                savableFrames.add((Savable) window);
+            }
+        }
+        savableFrames.add(this);
+        StateManager.recoverAllStates(savableFrames, fileManager);
         setContentPane(desktopPane);
         initJMenuBar(new JMenuBar());
-        recoverState();
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -47,12 +52,7 @@ public class MainApplicationFrame extends JFrame implements Savable
                 "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (n == JOptionPane.YES_OPTION){
-            for (JInternalFrame window : desktopPane.getAllFrames()) {
-                if (window instanceof Savable) {
-                    ((Savable) window).saveState();
-                }
-            }
-            saveState();
+            StateManager.saveAllStates(savableFrames, fileManager);
             this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
     }
@@ -158,17 +158,23 @@ public class MainApplicationFrame extends JFrame implements Savable
     }
 
     @Override
-    public void saveState() {
-        fileManager.writeState(Saver.buildState(this, prefix));
+    public String getPrefix() {
+        return "main";
     }
 
     @Override
-    public void recoverState() {
+    public SubDictionary<String, String> getWindowState() {
+        return Saver.buildState(this);
+    }
+
+    @Override
+    public void setWindowState(SubDictionary<String, String> state) {
         try {
-            Saver.setState(this, fileManager.readState(prefix));
+            Saver.setState(this, state);
         } catch (Exception e){
             setLocation(50, 50);
             setExtendedState(MAXIMIZED_BOTH);
+            e.printStackTrace();
         }
     }
 }

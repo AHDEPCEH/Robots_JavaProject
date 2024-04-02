@@ -5,12 +5,20 @@ package ru.urfu.saveUtil;
  */
 public interface Savable {
     /**
-     * Сохранение параметров окна и его состояния
+     * Получение префикса у объекта
+     * @return - префикс
      */
-    void saveState();
+    String getPrefix();
 
     /**
-     * Восстановление параметров окна и его состояния
+     * Получить состояние у объекта
+     * @return возвращает собранное состояние
      */
-    void recoverState();
+    SubDictionary<String, String> getWindowState();
+
+    /**
+     * Установить состояние объекту
+     * @param state - собранное состояние
+     */
+    void setWindowState(SubDictionary<String, String> state);
 }

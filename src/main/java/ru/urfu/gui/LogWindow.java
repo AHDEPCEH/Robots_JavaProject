@@ -4,10 +4,9 @@ import ru.urfu.log.LogChangeListener;
 import ru.urfu.log.LogEntry;
 import ru.urfu.log.LogWindowSource;
 import ru.urfu.log.Logger;
-import ru.urfu.saveUtil.FileManager;
 import ru.urfu.saveUtil.Savable;
 import ru.urfu.saveUtil.Saver;
-
+import ru.urfu.saveUtil.SubDictionary;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -21,18 +20,14 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 {
     private final LogWindowSource m_logSource;
     private final TextArea m_logContent;
-    private final String prefix = "log";
-    private final FileManager fileManager;
 
     /**
      * Конструктор класса
      */
-    public LogWindow(FileManager fileManager)
+    public LogWindow()
     {
         super("Протокол работы", true, true, true, true);
-        this.fileManager = fileManager;
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        recoverState();
         addInternalFrameListener(new InternalFrameAdapter() {
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
@@ -76,17 +71,23 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     }
 
     @Override
-    public void saveState() {
-        fileManager.writeState(Saver.buildState(this, prefix));
+    public String getPrefix() {
+        return "log";
     }
 
     @Override
-    public void recoverState() {
+    public SubDictionary<String, String> getWindowState() {
+        return Saver.buildState(this);
+    }
+
+    @Override
+    public void setWindowState(SubDictionary<String, String> state) {
         try {
-            Saver.setState(this, fileManager.readState(prefix));
+            Saver.setState(this, state);
         } catch (Exception e){
             setSize(300, 600);
             setLocation(50, 50);
+            e.printStackTrace();
         }
     }
 }
