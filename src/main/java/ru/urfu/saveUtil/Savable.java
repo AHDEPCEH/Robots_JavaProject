@@ -9,16 +9,4 @@ public interface Savable {
      * @return - префикс
      */
     String getPrefix();
-
-    /**
-     * Получить состояние у объекта
-     * @return возвращает собранное состояние
-     */
-    SubDictionary<String, String> getWindowState();
-
-    /**
-     * Установить состояние объекту
-     * @param state - собранное состояние
-     */
-    void setWindowState(SubDictionary<String, String> state);
 }

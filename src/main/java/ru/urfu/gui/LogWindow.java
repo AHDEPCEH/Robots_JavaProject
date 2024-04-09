@@ -5,8 +5,6 @@ import ru.urfu.log.LogEntry;
 import ru.urfu.log.LogWindowSource;
 import ru.urfu.log.Logger;
 import ru.urfu.saveUtil.Savable;
-import ru.urfu.saveUtil.Saver;
-import ru.urfu.saveUtil.SubDictionary;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -27,6 +25,8 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     public LogWindow()
     {
         super("Протокол работы", true, true, true, true);
+        setSize(300, 600);
+        setLocation(50, 50);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addInternalFrameListener(new InternalFrameAdapter() {
             @Override
@@ -60,7 +60,6 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
         m_logContent.invalidate();
     }
 
-
     /**
      * Обновление данных в окне
      */
@@ -73,21 +72,5 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     @Override
     public String getPrefix() {
         return "log";
-    }
-
-    @Override
-    public SubDictionary<String, String> getWindowState() {
-        return Saver.buildState(this);
-    }
-
-    @Override
-    public void setWindowState(SubDictionary<String, String> state) {
-        try {
-            Saver.setState(this, state);
-        } catch (Exception e){
-            setSize(300, 600);
-            setLocation(50, 50);
-            e.printStackTrace();
-        }
     }
 }

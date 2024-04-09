@@ -3,6 +3,7 @@ package ru.urfu.gui;
 import ru.urfu.log.Logger;
 import ru.urfu.saveUtil.*;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -17,17 +18,19 @@ public class MainApplicationFrame extends JFrame implements Savable
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final FileManager fileManager = new FileManager();
 
-    private final List<Savable> savableFrames = new ArrayList<>();
+    private final List<Container> savableFrames = new ArrayList<>();
 
     /**
      * Создание главного окна приложения
      */
     public MainApplicationFrame() {
+        setLocation(50, 50);
+        setExtendedState(MAXIMIZED_BOTH);
         addWindow(new LogWindow());
         addWindow(new GameWindow());
         for (JInternalFrame window : desktopPane.getAllFrames()) {
             if (window instanceof Savable){
-                savableFrames.add((Savable) window);
+                savableFrames.add(window);
             }
         }
         savableFrames.add(this);
@@ -153,28 +156,12 @@ public class MainApplicationFrame extends JFrame implements Savable
         catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
-            // just ignore
+            e.printStackTrace();
         }
     }
 
     @Override
     public String getPrefix() {
         return "main";
-    }
-
-    @Override
-    public SubDictionary<String, String> getWindowState() {
-        return Saver.buildState(this);
-    }
-
-    @Override
-    public void setWindowState(SubDictionary<String, String> state) {
-        try {
-            Saver.setState(this, state);
-        } catch (Exception e){
-            setLocation(50, 50);
-            setExtendedState(MAXIMIZED_BOTH);
-            e.printStackTrace();
-        }
     }
 }
