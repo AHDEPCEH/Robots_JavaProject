@@ -8,14 +8,23 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.JPanel;
 
-public class GameVisualizer extends JPanel
-{
+public class GameVisualizer extends JPanel {
     private final Timer m_timer = initTimer();
+    private PropertyChangeListener propertyChangeListener;
+    private PropertyChangeSupport supporter;
+
+    public void setPropertyChangeListener(PropertyChangeListener listener) {
+        supporter = new PropertyChangeSupport(this);
+        supporter.addPropertyChangeListener(listener);
+    }
+
     
     private static Timer initTimer() 
     {
@@ -25,7 +34,8 @@ public class GameVisualizer extends JPanel
     
     private volatile double m_robotPositionX = 100;
     private volatile double m_robotPositionY = 100; 
-    private volatile double m_robotDirection = 0; 
+    private volatile double m_robotDirection = 0;
+    private double angleToTarget;
 
     private volatile int m_targetPositionX = 150;
     private volatile int m_targetPositionY = 100;
@@ -61,6 +71,7 @@ public class GameVisualizer extends JPanel
             }
         });
         setDoubleBuffered(true);
+
     }
 
     protected void setTargetPosition(Point p)
@@ -81,12 +92,15 @@ public class GameVisualizer extends JPanel
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
     
-    private static double angleTo(double fromX, double fromY, double toX, double toY)
+    private double angleTo(double fromX, double fromY, double toX, double toY)
     {
         double diffX = toX - fromX;
         double diffY = toY - fromY;
-        
-        return asNormalizedRadians(Math.atan2(diffY, diffX));
+        double newAngle = asNormalizedRadians(Math.atan2(diffY, diffX));
+        if (supporter != null) {
+            supporter.firePropertyChange("property", (int) angleToTarget, (int) newAngle);
+        }
+        return newAngle;
     }
     
     protected void onModelUpdateEvent()
@@ -98,8 +112,14 @@ public class GameVisualizer extends JPanel
             return;
         }
         double velocity = maxVelocity;
-        double angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
+        angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
+//        if (Math.abs(angleToTarget - m_robotDirection) > Math.abs(angleToTarget + m_robotDirection)){
+//            angularVelocity = maxAngularVelocity;
+//        }
+//        if (Math.abs(angleToTarget - m_robotDirection) < Math.abs(angleToTarget + m_robotDirection)){
+//            angularVelocity = -maxAngularVelocity;
+//        }
         if (angleToTarget > m_robotDirection)
         {
             angularVelocity = maxAngularVelocity;
@@ -138,6 +158,10 @@ public class GameVisualizer extends JPanel
         if (!Double.isFinite(newY))
         {
             newY = m_robotPositionY + velocity * duration * Math.sin(m_robotDirection);
+        }
+        if (supporter != null) {
+            supporter.firePropertyChange("property", (int) m_robotPositionX, newX);
+            supporter.firePropertyChange("property", (int) m_robotPositionY, newY);
         }
         m_robotPositionX = newX;
         m_robotPositionY = newY;
@@ -206,5 +230,17 @@ public class GameVisualizer extends JPanel
         fillOval(g, x, y, 5, 5);
         g.setColor(Color.BLACK);
         drawOval(g, x, y, 5, 5);
+    }
+
+    public int getM_robotPositionX(){
+        return (int) m_robotPositionX;
+    }
+
+    public int getM_robotPositionY(){
+        return (int) m_robotPositionY;
+    }
+
+    public double getAngleToTarget(){
+        return angleToTarget;
     }
 }

@@ -23,8 +23,10 @@ public class MainApplicationFrame extends JFrame implements Savable
      * Создание главного окна приложения
      */
     public MainApplicationFrame() {
+        GameVisualizer m_visualizer = new GameVisualizer();
         addWindow(new LogWindow());
-        addWindow(new GameWindow());
+        addWindow(new GameWindow(m_visualizer));
+        addWindow(new CoordinateWindow(m_visualizer));
         for (JInternalFrame window : desktopPane.getAllFrames()) {
             if (window instanceof Savable){
                 savableFrames.add((Savable) window);

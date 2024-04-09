@@ -11,10 +11,8 @@ import java.awt.*;
  */
 public class GameWindow extends JInternalFrame implements Savable
 {
-    public GameWindow()
-    {
+    public GameWindow(GameVisualizer m_visualizer) {
         super("Игровое поле", true, true, true, true);
-        GameVisualizer m_visualizer = new GameVisualizer();
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -22,8 +20,7 @@ public class GameWindow extends JInternalFrame implements Savable
 
     @Override
     public String getPrefix() {
-        String prefix = "model";
-        return prefix;
+        return "model";
     }
 
     @Override
