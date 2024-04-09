@@ -1,6 +1,9 @@
 package ru.urfu.gui;
 
 import ru.urfu.log.Logger;
+import ru.urfu.robot.Controller;
+import ru.urfu.robot.RobotModel;
+import ru.urfu.robot.Visualizer;
 import ru.urfu.saveUtil.*;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -23,10 +26,15 @@ public class MainApplicationFrame extends JFrame implements Savable
      * Создание главного окна приложения
      */
     public MainApplicationFrame() {
-        GameVisualizer m_visualizer = new GameVisualizer();
+        RobotModel model = new RobotModel();
+        Controller controller = new Controller(model);
+        Visualizer visualizer = new Visualizer(controller);
+        CoordinateWindow coordinateWindow = new CoordinateWindow();
+        model.setPropertyChangeListener(visualizer);
+        model.setPropertyChangeListener(coordinateWindow);
         addWindow(new LogWindow());
-        addWindow(new GameWindow(m_visualizer));
-        addWindow(new CoordinateWindow(m_visualizer));
+        addWindow(new GameWindow(visualizer));
+        addWindow(coordinateWindow);
         for (JInternalFrame window : desktopPane.getAllFrames()) {
             if (window instanceof Savable){
                 savableFrames.add((Savable) window);

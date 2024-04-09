@@ -1,5 +1,6 @@
 package ru.urfu.gui;
 
+import ru.urfu.robot.Visualizer;
 import ru.urfu.saveUtil.Savable;
 import ru.urfu.saveUtil.Saver;
 import ru.urfu.saveUtil.SubDictionary;
@@ -11,10 +12,10 @@ import java.awt.*;
  */
 public class GameWindow extends JInternalFrame implements Savable
 {
-    public GameWindow(GameVisualizer m_visualizer) {
+    public GameWindow(Visualizer visualizer) {
         super("Игровое поле", true, true, true, true);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(m_visualizer, BorderLayout.CENTER);
+        panel.add(visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
     }
 

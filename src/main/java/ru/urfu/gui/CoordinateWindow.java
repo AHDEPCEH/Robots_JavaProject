@@ -1,5 +1,6 @@
 package ru.urfu.gui;
 
+import ru.urfu.robot.RobotModel;
 import ru.urfu.saveUtil.Savable;
 import ru.urfu.saveUtil.Saver;
 import ru.urfu.saveUtil.SubDictionary;
@@ -14,13 +15,12 @@ import java.beans.PropertyChangeListener;
  */
 public class CoordinateWindow extends JInternalFrame implements Savable, PropertyChangeListener {
 
-    private TextArea context;
-    public CoordinateWindow(GameVisualizer m_visualizer) {
+    private final TextArea context;
+    public CoordinateWindow() {
         super("Координаты робота", true, true, true, true);
         context = new TextArea("");
         context.setSize(100, 100);
         JPanel panel = new JPanel(new BorderLayout());
-        m_visualizer.setPropertyChangeListener(this);
         panel.add(context, BorderLayout.CENTER);
         getContentPane().add(panel);
     }
@@ -48,9 +48,11 @@ public class CoordinateWindow extends JInternalFrame implements Savable, Propert
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        GameVisualizer source = (GameVisualizer) evt.getSource();
-        context.setText("X: " + source.getM_robotPositionX() + "\n"
-                + "Y: " + source.getM_robotPositionY() + "\n"
-                + "Angle: " + source.getAngleToTarget());
+        if (evt.getSource() instanceof RobotModel model) {
+            context.setText("X: " + model.getRobotPositionX() + "\n" +
+            "Y: " + model.getRobotPositionY() + "\n" +
+            "Angle: " + model.getAngleToTarget() + "\n" +
+            "Direction: " + model.getRobotDirection());
+        }
     }
 }
