@@ -1,5 +1,7 @@
 package ru.urfu.saveUtil;
 
+import ru.urfu.log.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyVetoException;
@@ -13,30 +15,34 @@ import java.util.Map;
  */
 public class StateManager {
 
+    private static final StateFile stateFile = new StateFile();
+
     private StateManager(){}
 
     /**
      * Метод для сохранения состояния у окон
      * @param windows - окна
-     * @param fileManager - объект для работы с файлом сохранения
      */
-    public static void saveAllStates (List<Container> windows, FileManager fileManager) {
+    public static void saveAllStates (List<Container> windows) {
         List<SubDictionary<String, String>> states = new ArrayList<>();
         for (Container window : windows) {
-            states.add(buildState(window));
+            if (window instanceof Savable) {
+                states.add(buildState(window));
+            }
         }
-        fileManager.writeState(states);
+        stateFile.writeState(states);
     }
 
     /**
      * Метод собирающий восстанавливающий состояние для окон
      * @param windows - окна
-     * @param fileManager - объект для работы с файлом сохранения
      */
-    public static void recoverAllStates (List<Container> windows, FileManager fileManager){
-        Map<String, SubDictionary<String, String>> states = fileManager.readState();
+    public static void recoverAllStates (List<Container> windows){
+        Map<String, SubDictionary<String, String>> states = stateFile.readState();
         for (Container window : windows){
-            setState(window, states.get(((Savable) window).getPrefix()));
+            if (window instanceof Savable savableWindow) {
+                setState(window, states.get(savableWindow.getPrefix()));
+            }
         }
     }
 
@@ -52,11 +58,11 @@ public class StateManager {
         state.put("positionX", Integer.toString(window.getX()));
         state.put("positionY", Integer.toString(window.getY()));
 
-        if (window instanceof JFrame) {
-                state.put("state", Integer.toString(((JFrame) window).getExtendedState()));
+        if (window instanceof JFrame frame) {
+                state.put("state", Integer.toString(frame.getExtendedState()));
         }
-        if (window instanceof JInternalFrame) {
-                state.put("icon", Boolean.toString(((JInternalFrame) window).isIcon()));
+        if (window instanceof JInternalFrame frame) {
+                state.put("icon", Boolean.toString(frame.isIcon()));
         }
         return state;
     }
@@ -65,7 +71,7 @@ public class StateManager {
      * Метод устанавливающий окну все его параметры
      * @param window - окно
      * @param state - словарь состояния
-     * @throws PropertyVetoException Ошибки восстановления свёрнутого окна
+     * @throws PropertyVetoException
      */
     private static void setState(Container window, SubDictionary<String, String> state){
         try {
@@ -77,14 +83,15 @@ public class StateManager {
                     Integer.parseInt(state.get("width")),
                     Integer.parseInt(state.get("height")));
 
-            if (window instanceof JFrame) {
-                ((JFrame) window).setExtendedState(Integer.parseInt(state.get("state")));
+            if (window instanceof JFrame frame) {
+                frame.setExtendedState(Integer.parseInt(state.get("state")));
             }
-            if (window instanceof JInternalFrame) {
-                ((JInternalFrame) window).setIcon(Boolean.parseBoolean(state.get("icon")));
+            if (window instanceof JInternalFrame frame) {
+                frame.setIcon(Boolean.parseBoolean(state.get("icon")));
             }
         } catch (PropertyVetoException e) {
             e.printStackTrace();
+            Logger.debug("Ошибка восстановления состояния");
         }
     }
 }

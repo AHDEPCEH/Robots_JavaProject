@@ -1,5 +1,7 @@
 package ru.urfu.saveUtil;
 
+import ru.urfu.log.Logger;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.Map;
 /**
  * Класс для записи и чтения состояний окон из файла
  */
-public class FileManager {
+public class StateFile {
 
     private final String fileName = System.getProperty("user.home")+"/save";
     /**
@@ -25,6 +27,7 @@ public class FileManager {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Logger.debug("Не удалось записать состояние в файл");
         }
     }
 
@@ -47,6 +50,7 @@ public class FileManager {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Logger.debug("Не удалось прочитать состояние из файла");
         }
         return states;
     }
