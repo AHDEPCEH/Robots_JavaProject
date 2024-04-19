@@ -1,34 +1,32 @@
 package ru.urfu.gui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.TextArea;
-
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
 import ru.urfu.log.LogChangeListener;
 import ru.urfu.log.LogEntry;
 import ru.urfu.log.LogWindowSource;
+import ru.urfu.log.Logger;
+import ru.urfu.saveUtil.Savable;
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import java.awt.*;
 
 
 /**
  * Внутреннее окно для отображения событий(логов)
  */
-public class LogWindow extends JInternalFrame implements LogChangeListener
+public class LogWindow extends JInternalFrame implements LogChangeListener, Savable
 {
-    private LogWindowSource m_logSource;
-    private TextArea m_logContent;
+    private final LogWindowSource m_logSource;
+    private final TextArea m_logContent;
 
     /**
      * Конструктор класса
-     * @param logSource - источник
      */
-    public LogWindow(LogWindowSource logSource) 
+    public LogWindow()
     {
         super("Протокол работы", true, true, true, true);
+        setSize(300, 600);
+        setLocation(50, 50);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addInternalFrameListener(new InternalFrameAdapter() {
             @Override
@@ -37,15 +35,14 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
                 dispose();
             }
         });
-        m_logSource = logSource;
+        m_logSource = Logger.getDefaultLogSource();
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
         m_logContent.setSize(200, 500);
-        
+        Logger.debug("Протокол работает");
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
         getContentPane().add(panel);
-        pack();
         updateLogContent();
     }
 
@@ -63,7 +60,6 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
         m_logContent.invalidate();
     }
 
-
     /**
      * Обновление данных в окне
      */
@@ -71,5 +67,10 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
     public void onLogChanged()
     {
         EventQueue.invokeLater(this::updateLogContent);
+    }
+
+    @Override
+    public String getPrefix() {
+        return "log";
     }
 }

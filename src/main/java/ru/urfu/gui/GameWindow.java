@@ -1,23 +1,27 @@
 package ru.urfu.gui;
 
-import java.awt.BorderLayout;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
+import ru.urfu.saveUtil.Savable;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Внутренне окно - Игровое поле, по которому перемещается робот
  */
-public class GameWindow extends JInternalFrame
+public class GameWindow extends JInternalFrame implements Savable
 {
-    private final GameVisualizer m_visualizer;
-
-    public GameWindow() 
+    public GameWindow()
     {
         super("Игровое поле", true, true, true, true);
-        m_visualizer = new GameVisualizer();
+        setLocation(400, 50);
+        setSize(500, 500);
+        GameVisualizer m_visualizer = new GameVisualizer();
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
-        pack();
+    }
+
+    @Override
+    public String getPrefix() {
+        return "model";
     }
 }

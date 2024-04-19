@@ -1,7 +1,5 @@
 package ru.urfu.gui;
 
-import java.awt.Frame;
-
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -14,12 +12,12 @@ public class RobotsProgram
 //        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
       } catch (Exception e) {
-        e.printStackTrace();
+          e.printStackTrace();
+          System.out.println("Ошибка установки интерфейса");
       }
       SwingUtilities.invokeLater(() -> {
-        MainApplicationFrame frame = new MainApplicationFrame();
-        frame.pack();
+        MainApplicationFrame frame = new MainApplicationFrame( );
         frame.setVisible(true);
-        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       });
-    }}
+    }
+}
