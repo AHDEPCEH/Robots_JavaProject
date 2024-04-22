@@ -2,8 +2,6 @@ package ru.urfu.gui;
 
 import ru.urfu.robot.Visualizer;
 import ru.urfu.saveUtil.Savable;
-import ru.urfu.saveUtil.Saver;
-import ru.urfu.saveUtil.SubDictionary;
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,6 +12,8 @@ public class GameWindow extends JInternalFrame implements Savable
 {
     public GameWindow(Visualizer visualizer) {
         super("Игровое поле", true, true, true, true);
+        setLocation(400, 50);
+        setSize(500, 500);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -22,21 +22,5 @@ public class GameWindow extends JInternalFrame implements Savable
     @Override
     public String getPrefix() {
         return "model";
-    }
-
-    @Override
-    public SubDictionary<String, String> getWindowState() {
-        return Saver.buildState(this);
-    }
-
-    @Override
-    public void setWindowState(SubDictionary<String, String> state) {
-        try {
-            Saver.setState(this, state);
-        } catch (Exception e) {
-            setLocation(400, 50);
-            setSize(500, 500);
-            e.printStackTrace();
-        }
     }
 }

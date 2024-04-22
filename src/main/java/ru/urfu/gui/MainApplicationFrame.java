@@ -6,10 +6,12 @@ import ru.urfu.robot.RobotModel;
 import ru.urfu.robot.Visualizer;
 import ru.urfu.saveUtil.*;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,9 +20,6 @@ import java.util.List;
 public class MainApplicationFrame extends JFrame implements Savable
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private final FileManager fileManager = new FileManager();
-
-    private final List<Savable> savableFrames = new ArrayList<>();
 
     /**
      * Создание главного окна приложения
@@ -32,16 +31,15 @@ public class MainApplicationFrame extends JFrame implements Savable
         CoordinateWindow coordinateWindow = new CoordinateWindow();
         model.setPropertyChangeListener(visualizer);
         model.setPropertyChangeListener(coordinateWindow);
+        setLocation(50, 50);
+        setExtendedState(MAXIMIZED_BOTH);
         addWindow(new LogWindow());
         addWindow(new GameWindow(visualizer));
         addWindow(coordinateWindow);
-        for (JInternalFrame window : desktopPane.getAllFrames()) {
-            if (window instanceof Savable){
-                savableFrames.add((Savable) window);
-            }
-        }
-        savableFrames.add(this);
-        StateManager.recoverAllStates(savableFrames, fileManager);
+        List<Container> frames = new ArrayList<>();
+        frames.addAll(Arrays.asList(desktopPane.getAllFrames()));
+        frames.add(this);
+        StateManager.recoverAllStates(frames);
         setContentPane(desktopPane);
         initJMenuBar(new JMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -62,7 +60,10 @@ public class MainApplicationFrame extends JFrame implements Savable
                 "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (n == JOptionPane.YES_OPTION){
-            StateManager.saveAllStates(savableFrames, fileManager);
+            List<Container> frames = new ArrayList<>();
+            frames.addAll(Arrays.asList(desktopPane.getAllFrames()));
+            frames.add(this);
+            StateManager.saveAllStates(frames);
             this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
     }
@@ -145,7 +146,7 @@ public class MainApplicationFrame extends JFrame implements Savable
 
         {
             JMenuItem logMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            logMessageItem.addActionListener((event) -> Logger.debug("Новая строка"));
+            logMessageItem.addActionListener((event) -> Logger.debug("Привет от Logger"));
             testMenu.add(logMessageItem);
         }
         return testMenu;
@@ -163,28 +164,13 @@ public class MainApplicationFrame extends JFrame implements Savable
         catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
-            // just ignore
+            e.printStackTrace();
+            Logger.debug(e.getMessage());
         }
     }
 
     @Override
     public String getPrefix() {
         return "main";
-    }
-
-    @Override
-    public SubDictionary<String, String> getWindowState() {
-        return Saver.buildState(this);
-    }
-
-    @Override
-    public void setWindowState(SubDictionary<String, String> state) {
-        try {
-            Saver.setState(this, state);
-        } catch (Exception e){
-            setLocation(50, 50);
-            setExtendedState(MAXIMIZED_BOTH);
-            e.printStackTrace();
-        }
     }
 }

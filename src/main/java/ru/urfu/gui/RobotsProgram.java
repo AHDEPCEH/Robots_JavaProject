@@ -13,6 +13,7 @@ public class RobotsProgram
 //        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
       } catch (Exception e) {
           e.printStackTrace();
+          System.out.println("Ошибка установки интерфейса");
       }
       SwingUtilities.invokeLater(() -> {
         MainApplicationFrame frame = new MainApplicationFrame( );
