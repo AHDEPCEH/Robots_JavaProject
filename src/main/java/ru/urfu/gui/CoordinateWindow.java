@@ -2,8 +2,6 @@ package ru.urfu.gui;
 
 import ru.urfu.robot.RobotModel;
 import ru.urfu.saveUtil.Savable;
-import ru.urfu.saveUtil.Saver;
-import ru.urfu.saveUtil.SubDictionary;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +16,8 @@ public class CoordinateWindow extends JInternalFrame implements Savable, Propert
     private final TextArea context;
     public CoordinateWindow() {
         super("Координаты робота", true, true, true, true);
+        setSize(300, 300);
+        setLocation(300, 300);
         context = new TextArea("");
         context.setSize(100, 100);
         JPanel panel = new JPanel(new BorderLayout());
@@ -28,22 +28,6 @@ public class CoordinateWindow extends JInternalFrame implements Savable, Propert
     @Override
     public String getPrefix() {
         return "coordWin";
-    }
-
-    @Override
-    public SubDictionary<String, String> getWindowState() {
-        return Saver.buildState(this);
-    }
-
-    @Override
-    public void setWindowState(SubDictionary<String, String> state) {
-        try {
-            Saver.setState(this, state);
-        } catch (Exception e) {
-            setLocation(400, 600);
-            setSize(100, 100);
-            e.printStackTrace();
-        }
     }
 
     @Override

@@ -135,9 +135,7 @@ public class RobotModel {
 
     public int getTargetPositionX() { return m_targetPositionX; }
 
-    public int getTargetPositionY() {
-        return m_targetPositionY;
-    }
+    public int getTargetPositionY() { return m_targetPositionY; }
 
     public double getRobotDirection() { return m_robotDirection; }
 

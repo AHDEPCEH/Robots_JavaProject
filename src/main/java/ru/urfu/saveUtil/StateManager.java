@@ -59,10 +59,10 @@ public class StateManager {
         state.put("positionY", Integer.toString(window.getY()));
 
         if (window instanceof JFrame frame) {
-                state.put("state", Integer.toString(frame.getExtendedState()));
+            state.put("state", Integer.toString(frame.getExtendedState()));
         }
         if (window instanceof JInternalFrame frame) {
-                state.put("icon", Boolean.toString(frame.isIcon()));
+            state.put("icon", Boolean.toString(frame.isIcon()));
         }
         return state;
     }
@@ -71,7 +71,6 @@ public class StateManager {
      * Метод устанавливающий окну все его параметры
      * @param window - окно
      * @param state - словарь состояния
-     * @throws PropertyVetoException
      */
     private static void setState(Container window, SubDictionary<String, String> state){
         try {
@@ -89,7 +88,7 @@ public class StateManager {
             if (window instanceof JInternalFrame frame) {
                 frame.setIcon(Boolean.parseBoolean(state.get("icon")));
             }
-        } catch (PropertyVetoException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Logger.debug("Ошибка восстановления состояния");
         }

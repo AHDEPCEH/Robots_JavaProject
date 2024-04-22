@@ -25,19 +25,19 @@ public class MainApplicationFrame extends JFrame implements Savable
      * Создание главного окна приложения
      */
     public MainApplicationFrame() {
+        setLocation(50, 50);
+        setExtendedState(MAXIMIZED_BOTH);
         RobotModel model = new RobotModel();
         Controller controller = new Controller(model);
         Visualizer visualizer = new Visualizer(controller);
         CoordinateWindow coordinateWindow = new CoordinateWindow();
         model.setPropertyChangeListener(visualizer);
         model.setPropertyChangeListener(coordinateWindow);
-        setLocation(50, 50);
-        setExtendedState(MAXIMIZED_BOTH);
         addWindow(new LogWindow());
         addWindow(new GameWindow(visualizer));
         addWindow(coordinateWindow);
-        List<Container> frames = new ArrayList<>();
-        frames.addAll(Arrays.asList(desktopPane.getAllFrames()));
+        List<Container> frames = new ArrayList<>
+                (Arrays.asList(desktopPane.getAllFrames()));
         frames.add(this);
         StateManager.recoverAllStates(frames);
         setContentPane(desktopPane);
