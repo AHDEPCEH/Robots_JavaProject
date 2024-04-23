@@ -76,7 +76,7 @@ public class LogWindowSource
         {
             return Collections.emptyList();
         }
-        int indexTo = Math.min(startFrom + count, m_messages.size());
+        int indexTo = Math.min(startFrom + count, m_messages.size() - 1);
         return m_messages.getSegment(startFrom, indexTo);
     }
 
