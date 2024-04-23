@@ -3,7 +3,6 @@ package ru.urfu.gui;
 import ru.urfu.log.Logger;
 import ru.urfu.robot.Controller;
 import ru.urfu.robot.RobotModel;
-import ru.urfu.robot.Visualizer;
 import ru.urfu.saveUtil.*;
 import javax.swing.*;
 import java.awt.*;
@@ -165,7 +164,7 @@ public class MainApplicationFrame extends JFrame implements Savable
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             e.printStackTrace();
-            Logger.debug(e.getMessage());
+            Logger.error("Ошибка смены темы");
         }
     }
 

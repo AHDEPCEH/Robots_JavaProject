@@ -1,6 +1,5 @@
 package ru.urfu.gui;
 
-import ru.urfu.robot.Visualizer;
 import ru.urfu.saveUtil.Savable;
 import javax.swing.*;
 import java.awt.*;

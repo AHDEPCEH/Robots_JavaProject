@@ -52,7 +52,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 
     private JTextField getTextField() {
         JTextField smallField = new JTextField(15);
-        smallField.setToolTipText("Короткое поле");
+        smallField.setToolTipText("Индексы сегмента");
         smallField.setBounds(0, 510, 50, 20);
         smallField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -64,6 +64,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
                         showLogSegment(indexFrom, indexTo);
                     }
                 } catch (Exception ex) {
+                    Logger.error("Введены некорректные данные");
                     JOptionPane.showMessageDialog(LogWindow.this,
                             "Введите через пробел 2 числа чтобы посмотреть записи за указанный период");
                 }

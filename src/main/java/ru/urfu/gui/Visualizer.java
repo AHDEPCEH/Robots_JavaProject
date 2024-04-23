@@ -1,4 +1,7 @@
-package ru.urfu.robot;
+package ru.urfu.gui;
+
+import ru.urfu.robot.Controller;
+import ru.urfu.robot.RobotModel;
 
 import javax.swing.*;
 import java.awt.*;
