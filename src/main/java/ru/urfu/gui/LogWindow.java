@@ -5,13 +5,14 @@ import ru.urfu.log.LogEntry;
 import ru.urfu.log.LogWindowSource;
 import ru.urfu.log.Logger;
 import ru.urfu.saveUtil.Savable;
+
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 
 
 /**
@@ -78,7 +79,8 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
      */
     private void updateLogContent() {
         StringBuilder content = new StringBuilder();
-        for (LogEntry entry : m_logSource.all())
+        Iterable<LogEntry> logs = m_logSource.all();
+        for (LogEntry entry : logs)
         {
             content.append(entry.getMessage()).append("\n");
         }
@@ -88,7 +90,8 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 
     private void showLogSegment(int indexFrom, int indexTo) {
         StringBuilder content = new StringBuilder();
-        for (LogEntry entry : m_logSource.range(indexFrom, indexTo - indexFrom)) {
+        Iterable<LogEntry> logs = m_logSource.range(indexFrom, indexTo - indexFrom + 1);
+        for (LogEntry entry : logs) {
             content.append(entry.getMessage()).append("\n");
         }
         m_logContent.setText(content.toString());

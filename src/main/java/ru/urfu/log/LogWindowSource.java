@@ -76,12 +76,12 @@ public class LogWindowSource
         {
             return Collections.emptyList();
         }
-        int indexTo = Math.min(startFrom + count, m_messages.size() - 1);
-        return m_messages.getSegment(startFrom, indexTo);
+        int indexTo = Math.min(startFrom + count, m_messages.size());
+        return m_messages.iterator(startFrom, indexTo);
     }
 
     public Iterable<LogEntry> all()
     {
-        return m_messages.getAll();
+        return m_messages.iterator(0, m_messages.size());
     }
 }

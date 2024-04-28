@@ -55,54 +55,16 @@ public class CircularBuffer<T> {
     }
 
     /**
-     * Возвращает кусок буфера в заданном диапазоне
-     * @param startIndex - начало диапазона
-     * @param endIndex - конец диапазона
-     * @return Лист с элементами буфера
+     * Итерация по буферу
+     * @param startIndex - начало сегмента данных
+     * @param endIndex - конец сегмента данных
+     * @return Iterable объект
      */
-    public Iterable<T> getSegment(int startIndex, int endIndex) {
+    public Iterable<T> iterator(int startIndex, int endIndex) {
         lock.lock();
         try {
-            List<T> segment = new ArrayList<>();
-            int current = (head + startIndex) % buffer.length;
-            for (int i = 0; i <= endIndex - startIndex; i++) {
-                segment.add(buffer[current]);
-                current = (current + 1) % buffer.length;
-            }
-            return segment;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Возвращает сам буфер с записями в правильном порядке
-     * @return Лист с записями буфера
-     */
-    public Iterable<T> getAll() {
-        lock.lock();
-        try {
-            List<T> allElements = new ArrayList<>();
-            int current = head;
-            for (int i = 0; i < size; i++) {
-                allElements.add(buffer[current]);
-                current = (current + 1) % buffer.length;
-            }
-            return allElements;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Возвращает итератор для буфера
-     * @return Итератор
-     */
-    public Iterable<T> iterator() {
-        lock.lock();
-        try {
-            return new Iterable<T>() {
-                private int current = head;
+            return new Iterable<>() {
+                private int current = startIndex;
                 private int count = 0;
 
                 @Override
@@ -110,7 +72,7 @@ public class CircularBuffer<T> {
                     return new Iterator<T>() {
                         @Override
                         public boolean hasNext() {
-                            return count < size;
+                            return count < endIndex - startIndex;
                         }
 
                         @Override
