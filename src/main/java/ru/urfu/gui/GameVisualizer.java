@@ -1,4 +1,7 @@
-package ru.urfu.robot;
+package ru.urfu.gui;
+
+import ru.urfu.robot.GameController;
+import ru.urfu.robot.RobotModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,20 +14,19 @@ import java.beans.PropertyChangeListener;
 /**
  * Класс для отрисовки игры
  */
-public class Visualizer extends JPanel implements PropertyChangeListener {
-    private double robotPositionX = 100;
-    private double robotPositionY = 100;
-    private int targetPositionX = 150;
-    private int targetPositionY = 100;
-    private double robotDirection = 0;
-    public Visualizer(Controller controller) {
+public class GameVisualizer extends JPanel implements PropertyChangeListener {
+    private RobotModel model;
+    public GameVisualizer(RobotModel model) {
+        this.model = model;
+        GameController gameController = new GameController(model);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                controller.setClickCoordinates(e.getPoint());
+                gameController.setClickCoordinates(e.getPoint());
             }
         });
         setDoubleBuffered(true);
+        model.setPropertyChangeListener(this);
     }
 
 
@@ -32,8 +34,13 @@ public class Visualizer extends JPanel implements PropertyChangeListener {
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D)g;
-        drawRobot(g2d, round(robotPositionX), round(robotPositionY), robotDirection);
-        drawTarget(g2d, round(targetPositionX), round(targetPositionY));
+        drawRobot(g2d,
+                round(model.getRobotPositionX()),
+                round(model.getRobotPositionY()),
+                model.getRobotDirection());
+        drawTarget(g2d,
+                round(model.getTargetPositionX()),
+                round(model.getTargetPositionY()));
     }
 
     private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
@@ -74,12 +81,7 @@ public class Visualizer extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        RobotModel model = (RobotModel) evt.getSource();
-        robotPositionX = model.getRobotPositionX();
-        robotPositionY = model.getRobotPositionY();
-        robotDirection = model.getRobotDirection();
-        targetPositionX = model.getTargetPositionX();
-        targetPositionY = model.getTargetPositionY();
+        this.model = (RobotModel) evt.getSource();
         EventQueue.invokeLater(this::repaint);
     }
 }

@@ -14,7 +14,7 @@ import java.beans.PropertyChangeListener;
 public class CoordinateWindow extends JInternalFrame implements Savable, PropertyChangeListener {
 
     private final TextArea context;
-    public CoordinateWindow() {
+    public CoordinateWindow(RobotModel model) {
         super("Координаты робота", true, true, true, true);
         setSize(300, 300);
         setLocation(300, 300);
@@ -23,6 +23,7 @@ public class CoordinateWindow extends JInternalFrame implements Savable, Propert
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(context, BorderLayout.CENTER);
         getContentPane().add(panel);
+        model.setPropertyChangeListener(this);
     }
 
     @Override
