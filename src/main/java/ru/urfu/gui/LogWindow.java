@@ -12,7 +12,6 @@ import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 
 
 /**
@@ -51,25 +50,26 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
         updateLogContent();
     }
 
-
+    /**
+     * Создаёт поле ввода для получения определённых записей
+     * @return поле ввода
+     */
     private JTextField getTextField() {
         JTextField smallField = new JTextField(15);
         smallField.setToolTipText("Индексы сегмента");
         smallField.setBounds(0, 510, 50, 20);
-        smallField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String[] message = smallField.getText().split(" ");
-                    if (message.length == 2) {
-                        int indexFrom = Integer.parseInt(message[0]);
-                        int indexTo = Integer.parseInt(message[1]);
-                        showLogSegment(indexFrom, indexTo);
-                    }
-                } catch (Exception ex) {
-                    Logger.error("Введены некорректные данные");
-                    JOptionPane.showMessageDialog(LogWindow.this,
-                            "Введите через пробел 2 числа чтобы посмотреть записи за указанный период");
+        smallField.addActionListener(e -> {
+            try {
+                String[] message = smallField.getText().split(" ");
+                if (message.length == 2) {
+                    int indexFrom = Integer.parseInt(message[0]);
+                    int indexTo = Integer.parseInt(message[1]);
+                    showLogSegment(indexFrom, indexTo);
                 }
+            } catch (Exception ex) {
+                Logger.error("Введены некорректные данные");
+                JOptionPane.showMessageDialog(LogWindow.this,
+                        "Введите через пробел 2 числа чтобы посмотреть записи за указанный период");
             }
         });
         return smallField;
@@ -89,12 +89,12 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 
     private void showLogSegment(int indexFrom, int indexTo) {
         StringBuilder content = new StringBuilder();
-        Iterable<LogEntry> logs = m_logSource.range(indexFrom, indexTo - indexFrom + 1);
+        Iterable<LogEntry> logs = logSource.range(indexFrom, indexTo - indexFrom + 1);
         for (LogEntry entry : logs) {
             content.append(entry.getMessage()).append("\n");
         }
-        m_logContent.setText(content.toString());
-        m_logContent.invalidate();
+        logContent.setText(content.toString());
+        logContent.invalidate();
     }
 
     /**
