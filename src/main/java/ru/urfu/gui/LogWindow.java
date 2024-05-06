@@ -20,8 +20,8 @@ import java.util.Iterator;
  */
 public class LogWindow extends JInternalFrame implements LogChangeListener, Savable
 {
-    private final LogWindowSource m_logSource;
-    private final TextArea m_logContent;
+    private final LogWindowSource logSource;
+    private final TextArea logContent;
 
     /**
      * Конструктор класса
@@ -35,21 +35,22 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
         addInternalFrameListener(new InternalFrameAdapter() {
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
-                m_logSource.unregisterListener(LogWindow.this);
+                logSource.unregisterListener(LogWindow.this);
                 dispose();
             }
         });
-        m_logSource = Logger.getDefaultLogSource();
-        m_logSource.registerListener(this);
+        logSource = Logger.getDefaultLogSource();
+        logSource.registerListener(this);
         Logger.debug("Протокол работает");
         JPanel panel = new JPanel(new GridLayout(2, 1));
-        m_logContent = new TextArea("");
+        logContent = new TextArea("");
         JTextField smallField = getTextField();
-        panel.add(m_logContent);
+        panel.add(logContent);
         panel.add(smallField);
         getContentPane().add(panel);
         updateLogContent();
     }
+
 
     private JTextField getTextField() {
         JTextField smallField = new JTextField(15);
@@ -79,13 +80,11 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
      */
     private void updateLogContent() {
         StringBuilder content = new StringBuilder();
-        Iterable<LogEntry> logs = m_logSource.all();
-        for (LogEntry entry : logs)
-        {
+        for (LogEntry entry : logSource.all()) {
             content.append(entry.getMessage()).append("\n");
         }
-        m_logContent.setText(content.toString());
-        m_logContent.invalidate();
+        logContent.setText(content.toString());
+        logContent.invalidate();
     }
 
     private void showLogSegment(int indexFrom, int indexTo) {

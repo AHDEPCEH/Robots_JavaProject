@@ -5,13 +5,13 @@ package ru.urfu.log;
  */
 public class LogEntry
 {
-    private LogLevel m_logLevel;
-    private String m_strMessage;
+    private final LogLevel logLevel;
+    private final String strMessage;
     
     public LogEntry(LogLevel logLevel, String strMessage)
     {
-        m_strMessage = strMessage;
-        m_logLevel = logLevel;
+        this.strMessage = strMessage;
+        this.logLevel = logLevel;
     }
 
     /**
@@ -20,7 +20,7 @@ public class LogEntry
      */
     public String getMessage()
     {
-        return m_strMessage;
+        return strMessage;
     }
 
     /**
@@ -29,7 +29,7 @@ public class LogEntry
      */
     public LogLevel getLevel()
     {
-        return m_logLevel;
+        return logLevel;
     }
 }
 

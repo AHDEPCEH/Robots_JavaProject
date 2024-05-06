@@ -7,12 +7,12 @@ import java.util.TimerTask;
 /**
  * Класс для управления моделью робота
  */
-public class Controller{
+public class GameController {
     private final RobotModel model;
-    public Controller(RobotModel model) {
+    public GameController(RobotModel model) {
         this.model = model;
-        Timer m_timer = initTimer();
-        m_timer.schedule(new TimerTask()
+        Timer timer = new Timer("events generator", true);
+        timer.schedule(new TimerTask()
         {
             @Override
             public void run()
@@ -28,15 +28,6 @@ public class Controller{
      */
     public void setClickCoordinates (Point point) {
         model.setTargetPosition(point);
-    }
-
-    /**
-     * Инициализация таймера
-     * @return Таймер
-     */
-    private static Timer initTimer()
-    {
-        return new Timer("events generator", true);
     }
 
 }

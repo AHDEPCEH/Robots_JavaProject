@@ -1,7 +1,6 @@
 package ru.urfu.gui;
 
 import ru.urfu.log.Logger;
-import ru.urfu.robot.Controller;
 import ru.urfu.robot.RobotModel;
 import ru.urfu.saveUtil.*;
 import javax.swing.*;
@@ -27,14 +26,9 @@ public class MainApplicationFrame extends JFrame implements Savable
         setLocation(50, 50);
         setExtendedState(MAXIMIZED_BOTH);
         RobotModel model = new RobotModel();
-        Controller controller = new Controller(model);
-        Visualizer visualizer = new Visualizer(controller);
-        CoordinateWindow coordinateWindow = new CoordinateWindow();
-        model.setPropertyChangeListener(visualizer);
-        model.setPropertyChangeListener(coordinateWindow);
         addWindow(new LogWindow());
-        addWindow(new GameWindow(visualizer));
-        addWindow(coordinateWindow);
+        addWindow(new GameWindow(new GameVisualizer(model)));
+        addWindow(new CoordinateWindow(model));
         List<Container> frames = new ArrayList<>
                 (Arrays.asList(desktopPane.getAllFrames()));
         frames.add(this);
@@ -59,8 +53,7 @@ public class MainApplicationFrame extends JFrame implements Savable
                 "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (n == JOptionPane.YES_OPTION){
-            List<Container> frames = new ArrayList<>();
-            frames.addAll(Arrays.asList(desktopPane.getAllFrames()));
+            List<Container> frames = new ArrayList<>(Arrays.asList(desktopPane.getAllFrames()));
             frames.add(this);
             StateManager.saveAllStates(frames);
             this.setDefaultCloseOperation(EXIT_ON_CLOSE);
