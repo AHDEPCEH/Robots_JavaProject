@@ -1,6 +1,7 @@
 package ru.urfu.gui;
 
 import ru.urfu.log.Logger;
+import ru.urfu.robot.RobotModel;
 import ru.urfu.saveUtil.*;
 import javax.swing.*;
 import java.awt.*;
@@ -24,10 +25,12 @@ public class MainApplicationFrame extends JFrame implements Savable
     public MainApplicationFrame() {
         setLocation(50, 50);
         setExtendedState(MAXIMIZED_BOTH);
+        RobotModel model = new RobotModel();
         addWindow(new LogWindow());
-        addWindow(new GameWindow());
-        List<Container> frames = new ArrayList<>();
-        frames.addAll(Arrays.asList(desktopPane.getAllFrames()));
+        addWindow(new GameWindow(new GameVisualizer(model)));
+        addWindow(new CoordinateWindow(model));
+        List<Container> frames = new ArrayList<>
+                (Arrays.asList(desktopPane.getAllFrames()));
         frames.add(this);
         StateManager.recoverAllStates(frames);
         setContentPane(desktopPane);
@@ -50,8 +53,7 @@ public class MainApplicationFrame extends JFrame implements Savable
                 "Подтверждение", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (n == JOptionPane.YES_OPTION){
-            List<Container> frames = new ArrayList<>();
-            frames.addAll(Arrays.asList(desktopPane.getAllFrames()));
+            List<Container> frames = new ArrayList<>(Arrays.asList(desktopPane.getAllFrames()));
             frames.add(this);
             StateManager.saveAllStates(frames);
             this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -155,7 +157,7 @@ public class MainApplicationFrame extends JFrame implements Savable
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             e.printStackTrace();
-            Logger.debug(e.getMessage());
+            Logger.error(e.getMessage());
         }
     }
 

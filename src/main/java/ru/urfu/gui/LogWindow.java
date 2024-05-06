@@ -16,8 +16,8 @@ import java.awt.*;
  */
 public class LogWindow extends JInternalFrame implements LogChangeListener, Savable
 {
-    private final LogWindowSource m_logSource;
-    private final TextArea m_logContent;
+    private final LogWindowSource logSource;
+    private final TextArea logContent;
 
     /**
      * Конструктор класса
@@ -31,17 +31,17 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
         addInternalFrameListener(new InternalFrameAdapter() {
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
-                m_logSource.unregisterListener(LogWindow.this);
+                logSource.unregisterListener(LogWindow.this);
                 dispose();
             }
         });
-        m_logSource = Logger.getDefaultLogSource();
-        m_logSource.registerListener(this);
-        m_logContent = new TextArea("");
-        m_logContent.setSize(200, 500);
+        logSource = Logger.getDefaultLogSource();
+        logSource.registerListener(this);
+        logContent = new TextArea("");
+        logContent.setSize(200, 500);
         Logger.debug("Протокол работает");
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(m_logContent, BorderLayout.CENTER);
+        panel.add(logContent, BorderLayout.CENTER);
         getContentPane().add(panel);
         updateLogContent();
     }
@@ -52,12 +52,12 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     private void updateLogContent()
     {
         StringBuilder content = new StringBuilder();
-        for (LogEntry entry : m_logSource.all())
+        for (LogEntry entry : logSource.all())
         {
             content.append(entry.getMessage()).append("\n");
         }
-        m_logContent.setText(content.toString());
-        m_logContent.invalidate();
+        logContent.setText(content.toString());
+        logContent.invalidate();
     }
 
     /**

@@ -9,14 +9,12 @@ import java.awt.*;
  */
 public class GameWindow extends JInternalFrame implements Savable
 {
-    public GameWindow()
-    {
+    public GameWindow(GameVisualizer gameVisualizer) {
         super("Игровое поле", true, true, true, true);
         setLocation(400, 50);
         setSize(500, 500);
-        GameVisualizer m_visualizer = new GameVisualizer();
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(m_visualizer, BorderLayout.CENTER);
+        panel.add(gameVisualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
     }
 
