@@ -97,14 +97,7 @@ public class MainApplicationFrame extends JFrame implements Savable, Localizable
         {
             JMenuItem closeItem = new JMenuItem("Русский", KeyEvent.VK_R);
             closeItem.addActionListener((event) -> {
-                List<Container> frames = new ArrayList<>(Arrays.asList(desktopPane.getAllFrames()));
-                frames.add(MainApplicationFrame.this);
-                for (Container frame : frames) {
-                    if (frame instanceof Localizable localizable) {
-                        ResourceBundle bundle = ResourceBundle.getBundle(localizable.getObjectName(), new Locale("ru"));
-                        localizable.onUpdateContent(bundle);
-                    }
-                }
+                changeLocale(new Locale("ru"));
             });
             languageMenu.add(closeItem);
         }
@@ -112,14 +105,7 @@ public class MainApplicationFrame extends JFrame implements Savable, Localizable
         {
             JMenuItem closeItem = new JMenuItem("Pyckuy", KeyEvent.VK_P);
             closeItem.addActionListener((event) -> {
-                List<Container> frames = new ArrayList<>(Arrays.asList(desktopPane.getAllFrames()));
-                frames.add(MainApplicationFrame.this);
-                for (Container frame : frames) {
-                    if (frame instanceof Localizable localizable) {
-                       ResourceBundle bundle = ResourceBundle.getBundle(localizable.getObjectName(), new Locale("py"));
-                       localizable.onUpdateContent(bundle);
-                    }
-                }
+                changeLocale(new Locale("py"));
             });
             languageMenu.add(closeItem);
         }
@@ -177,6 +163,21 @@ public class MainApplicationFrame extends JFrame implements Savable, Localizable
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
         return lookAndFeelMenu;
+    }
+
+    /**
+     * Меняет локализацию приложения
+     * @param locale
+     */
+    void changeLocale(Locale locale) {
+        List<Container> frames = new ArrayList<>(Arrays.asList(desktopPane.getAllFrames()));
+        frames.add(MainApplicationFrame.this);
+        for (Container frame : frames) {
+            if (frame instanceof Localizable localizable) {
+                ResourceBundle bundle = ResourceBundle.getBundle(localizable.getObjectName(), locale);
+                localizable.onUpdateContent(bundle);
+            }
+        }
     }
 
     /**
