@@ -7,11 +7,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ResourceBundle;
 
 /**
  * Внутреннее окно с информацией о роботе
  */
-public class CoordinateWindow extends JInternalFrame implements Savable, PropertyChangeListener {
+public class CoordinateWindow extends JInternalFrame implements Savable, PropertyChangeListener, Localizable {
 
     private final TextArea context;
     public CoordinateWindow(RobotModel model) {
@@ -39,5 +40,15 @@ public class CoordinateWindow extends JInternalFrame implements Savable, Propert
             "Angle: " + model.getAngleToTarget() + "\n" +
             "Direction: " + model.getRobotDirection());
         }
+    }
+
+    @Override
+    public String getObjectName() {
+        return "coordWin";
+    }
+
+    @Override
+    public void onUpdateContent(ResourceBundle resourceBundle) {
+        setTitle(resourceBundle.getString("title"));
     }
 }

@@ -10,17 +10,17 @@ import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 
 /**
  * Внутреннее окно для отображения событий(логов)
  */
-public class LogWindow extends JInternalFrame implements LogChangeListener, Savable
+public class LogWindow extends JInternalFrame implements LogChangeListener, Savable, Localizable
 {
     private final LogWindowSource logSource;
     private final TextArea logContent;
+    private String errorMessage = "Введите через пробел 2 числа чтобы посмотреть записи за указанный период";
 
     /**
      * Конструктор класса
@@ -69,7 +69,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
             } catch (Exception ex) {
                 Logger.error("Введены некорректные данные");
                 JOptionPane.showMessageDialog(LogWindow.this,
-                        "Введите через пробел 2 числа чтобы посмотреть записи за указанный период");
+                        errorMessage);
             }
         });
         return smallField;
@@ -109,5 +109,16 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     @Override
     public String getPrefix() {
         return "log";
+    }
+
+    @Override
+    public String getObjectName() {
+        return "log";
+    }
+
+    @Override
+    public void onUpdateContent(ResourceBundle resourceBundle) {
+        setTitle(resourceBundle.getString("title"));
+        errorMessage = resourceBundle.getString("error");
     }
 }
