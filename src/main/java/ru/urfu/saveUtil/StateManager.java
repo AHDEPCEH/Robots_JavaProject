@@ -90,7 +90,7 @@ public class StateManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Logger.debug("Ошибка восстановления состояния");
+            Logger.error("stateError");
         }
     }
 }

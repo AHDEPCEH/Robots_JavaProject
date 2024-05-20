@@ -15,13 +15,12 @@ import java.util.Collections;
 public class LogWindowSource
 {
 
-    private final ArrayList<LogEntry> messages;
+    private final CircularBuffer<LogEntry> messages;
     private final ArrayList<LogChangeListener> listeners;
     private volatile LogChangeListener[] activeLogListeners;
-
-    public LogWindowSource(int queueLength)
-    {
-        messages = new ArrayList<>(queueLength);
+    
+    public LogWindowSource(int queueLength) {
+        messages = new CircularBuffer<>(queueLength);
         listeners = new ArrayList<>();
     }
     
@@ -77,11 +76,11 @@ public class LogWindowSource
             return Collections.emptyList();
         }
         int indexTo = Math.min(startFrom + count, messages.size());
-        return messages.subList(startFrom, indexTo);
+        return messages.iterator(startFrom, indexTo);
     }
 
     public Iterable<LogEntry> all()
     {
-        return messages;
+        return messages.iterator(0, messages.size());
     }
 }
