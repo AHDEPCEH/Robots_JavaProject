@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 
@@ -20,6 +21,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 {
     private final LogWindowSource logSource;
     private final TextArea logContent;
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle(getObjectName(), new Locale("ru"));
     private String errorMessage = "Введите через пробел 2 числа чтобы посмотреть записи за указанный период";
 
     /**
@@ -40,7 +42,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
         });
         logSource = Logger.getDefaultLogSource();
         logSource.registerListener(this);
-        Logger.debug("Протокол работает");
+        Logger.debug("start");
         JPanel panel = new JPanel(new GridLayout(2, 1));
         logContent = new TextArea("");
         JTextField smallField = getTextField();
@@ -67,7 +69,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
                     showLogSegment(indexFrom, indexTo);
                 }
             } catch (Exception ex) {
-                Logger.error("Введены некорректные данные");
+                Logger.error("incorrectData");
                 JOptionPane.showMessageDialog(LogWindow.this,
                         errorMessage);
             }
@@ -81,7 +83,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
     private void updateLogContent() {
         StringBuilder content = new StringBuilder();
         for (LogEntry entry : logSource.all()) {
-            content.append(entry.getMessage()).append("\n");
+            content.append(resourceBundle.getString(entry.getMessage())).append("\n");
         }
         logContent.setText(content.toString());
         logContent.invalidate();
@@ -91,7 +93,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
         StringBuilder content = new StringBuilder();
         Iterable<LogEntry> logs = logSource.range(indexFrom, indexTo - indexFrom + 1);
         for (LogEntry entry : logs) {
-            content.append(entry.getMessage()).append("\n");
+            content.append(resourceBundle.getString(entry.getMessage())).append("\n");
         }
         logContent.setText(content.toString());
         logContent.invalidate();
@@ -118,7 +120,9 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Sava
 
     @Override
     public void onUpdateContent(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
         setTitle(resourceBundle.getString("title"));
         errorMessage = resourceBundle.getString("error");
+        updateLogContent();
     }
 }
