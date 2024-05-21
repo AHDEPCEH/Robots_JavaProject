@@ -1,5 +1,6 @@
 package ru.urfu.gui;
 
+import ru.urfu.loadUtils.LoadManager;
 import ru.urfu.log.Logger;
 import ru.urfu.robot.RobotModel;
 import ru.urfu.saveUtil.*;
@@ -17,6 +18,7 @@ import java.util.List;
 public class MainApplicationFrame extends JFrame implements Savable, Localizable
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final GameWindow gameWindow;
     private String title = "Подтверждение";
     private String message = "Вы действительно желаете выйти?";
     private String button1 = "Да";
@@ -30,7 +32,8 @@ public class MainApplicationFrame extends JFrame implements Savable, Localizable
         setExtendedState(MAXIMIZED_BOTH);
         RobotModel model = new RobotModel();
         addWindow(new LogWindow());
-        addWindow(new GameWindow(new GameVisualizer(model)));
+        this.gameWindow = new GameWindow(new GameVisualizer(model));
+        addWindow(gameWindow);
         addWindow(new CoordinateWindow(model));
         List<Container> frames = new ArrayList<>(Arrays.asList(desktopPane.getAllFrames()));
         frames.add(this);
@@ -126,6 +129,15 @@ public class MainApplicationFrame extends JFrame implements Savable, Localizable
                 this.dispatchEvent(windowClosing);
             });
             actionMenu.add(closeItem);
+        }
+        {
+            JMenuItem addRobotItem = new JMenuItem("Добавить робота", KeyEvent.VK_X);
+            addRobotItem.setName("add");
+            addRobotItem.addActionListener((event) -> {
+                LoadManager loadManager = new LoadManager(gameWindow);
+                loadManager.loadExtension("src/main/resources/extensions/SecondRobot.jar");
+            });
+            actionMenu.add(addRobotItem);
         }
         return actionMenu;
     }
