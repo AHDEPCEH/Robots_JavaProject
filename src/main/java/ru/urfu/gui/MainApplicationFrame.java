@@ -157,7 +157,7 @@ public class MainApplicationFrame extends JFrame implements Savable
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             e.printStackTrace();
-            Logger.error(e.getMessage());
+            Logger.error("Ошибка смены темы");
         }
     }
 

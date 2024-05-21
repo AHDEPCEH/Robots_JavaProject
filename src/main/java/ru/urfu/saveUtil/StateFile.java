@@ -27,7 +27,7 @@ public class StateFile {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Logger.debug("Не удалось записать состояние в файл");
+            Logger.error("Не удалось записать состояние в файл");
         }
     }
 
@@ -50,7 +50,7 @@ public class StateFile {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Logger.debug("Не удалось прочитать состояние из файла");
+            Logger.error("Не удалось прочитать состояние из файла");
         }
         return states;
     }
